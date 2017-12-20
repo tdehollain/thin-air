@@ -15,6 +15,7 @@ let recordsProcessed = 0;
 let recordsToProcess = 1;
 let APIcalls = 1;
 let maxAPICalls = 10;
+
 fetchData();
 
 async function fetchData() {
