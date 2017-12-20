@@ -1,0 +1,17 @@
+{
+  "name": "trade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "kraken-api": "^1.0.0",
+    "mongoose": "^4.13.5",
+    "request": "^2.83.0"
+  }
+}
