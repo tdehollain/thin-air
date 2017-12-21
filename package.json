@@ -12,6 +12,7 @@
   "dependencies": {
     "kraken-api": "^1.0.0",
     "mongoose": "^4.13.5",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "winston": "^2.4.0"
   }
 }
