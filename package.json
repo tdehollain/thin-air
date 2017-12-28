@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "try": "node lib/fetchTradeData.js XXBTZEUR 5",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,6 +14,7 @@
     "moment": "^2.20.1",
     "mongoose": "^4.13.5",
     "request": "^2.83.0",
-    "winston": "^2.4.0"
+    "winston": "^2.4.0",
+    "winston-loggly-bulk": "^2.0.1"
   }
 }
