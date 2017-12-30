@@ -1,0 +1,83 @@
+
+.App-header {
+  background-color: #222;
+  height: 100px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+
+
+
+form {
+  width: 800px;
+  margin: 10px auto;
+}
+
+form label {
+  margin-right: 10px;
+}
+
+.form-group {
+  margin-left: 20px;
+  display: inline;
+}
+
+.form-group:first-child {
+  margin-left: 0;
+}
+
+.chartContainer {
+  width: 1200px;
+  margin: 0 auto;
+}
+
+.simulationContainer {
+  width: 800px;
+  margin: 30px auto;
+}
+
+form button {
+  margin-left: 15px;
+}
+
+.simulationOutput {
+  width: 800px;
+  margin: 30px auto;
+}
+
+.IDHeader {
+  width: 10%;
+}
+
+.timeHeader {
+  width: 20%;
+}
+
+.actionHeader {
+  width: 10%;
+}
+
+.priceHeader {
+  width: 20%;
+}
+
+.cryptoHeader {
+  width: 20%;
+}
+
+.cashHeader {
+  width: 20%;
+}
+
+table tr.good {
+  background-color: rgb(129, 185, 129)!important;
+}
+
+table tr.bad {
+  background-color: rgb(185, 129, 129)!important;
+}
