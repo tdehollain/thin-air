@@ -4,10 +4,10 @@ import Chart from './Chart.jsx';
 export default class ChartContainer extends Component {
 
 	getBuyScatterData() {
-		return this.props.simOutput.filter(el => el.action==='buy');
+		return this.props.signals.filter(el => el.action==='buy');
 	}
 	getSellScatterData() {
-		return this.props.simOutput.filter(el => el.action==='sell');
+		return this.props.signals.filter(el => el.action==='sell');
 	}
 
 	render() {
@@ -15,8 +15,14 @@ export default class ChartContainer extends Component {
 			<div className='chartContainer'>
 				<Chart 
 					chartData={this.props.chartData}
+          chartDataShortMA={this.props.chartDataShortMA}
+          chartDataLongMA={this.props.chartDataLongMA}
+          pair={this.props.pair}
 					interval={this.props.interval}
 					priceType={this.props.priceType}
+					showShortMA={this.props.showShortMA}
+					showLongMA={this.props.showLongMA}
+					showScatter={this.props.showScatter}
 					buyScatterData={this.getBuyScatterData()}
 					sellScatterData={this.getSellScatterData()}
 				/>

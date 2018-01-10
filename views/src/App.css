@@ -13,65 +13,125 @@
 
 
 
-form {
+
+.chartSettingsContainer {
   width: 800px;
-  margin: 10px auto;
+  margin: 20px auto 10px;
+  padding: 10px;
+  border-radius: 2px;
+  border: 1px solid #bbb;
+  background: rgb(245, 245, 245);
+}
+
+.chartSettingsContainer h3 {
+  margin: 10px;
+}
+
+.chartSettingsForm {
+  display: flex;
+  justify-content: space-around;
+}
+
+.chartSettingsContainer .form-group {
+  width: 100px;
+  margin-left: 10px;
 }
 
 form label {
-  margin-right: 10px;
+  margin-left: 5px;
 }
 
-.form-group {
-  margin-left: 20px;
-  display: inline;
+.form-group select {
+  border-radius: 2px;
+  -webkit-appearance: none;
 }
 
-.form-group:first-child {
-  margin-left: 0;
-}
+
+
 
 .chartContainer {
   width: 1200px;
-  margin: 0 auto;
+  margin: 0 auto 20px;
+  /* border: 1px solid #555; */
 }
+
+
 
 .simulationContainer {
-  width: 800px;
+  width: 900px;
+  padding-left: 20px;
   margin: 30px auto;
 }
 
-form button {
-  margin-left: 15px;
+.startCrypto {
+  font-size: 2rem;
 }
 
-.simulationOutput {
-  width: 800px;
-  margin: 30px auto;
+.endCrypto{
+  font-size: 2rem;
 }
 
-.IDHeader {
-  width: 10%;
+.glyphicon {
+  font-size: 2rem;
+  margin: 0 5px;
 }
 
-.timeHeader {
-  width: 20%;
+.glyphicon.good {
+  transform: rotate(-45deg);
+  color: rgb(100, 192, 100);
+}
+.glyphicon.bad {
+  transform: rotate(45deg);
+  color: rgb(226, 70, 70);
 }
 
-.actionHeader {
-  width: 10%;
+.currentSimOutput th, .currentSimOutput td {
+  text-align: center;
 }
 
-.priceHeader {
-  width: 20%;
+.avgTypeHeader, .shortHeader, .longHeader {
+  width: 7%;
 }
 
-.cryptoHeader {
-  width: 20%;
+.startingHeader, .endingHeader {
+  width: 14%;
 }
 
-.cashHeader {
-  width: 20%;
+.arrowHeader {
+  width: 4%;
+}
+
+.goodTradesHeader, .goodBuyTradesHeader, .goodSellTradesHeader {
+  width: 14%
+}
+
+
+
+.simSettingsContainer {
+  margin: 40px auto 10px;
+  padding: 10px;
+  border-radius: 2px;
+  border: 1px solid #bbb;
+  background: rgb(245, 245, 245);
+}
+
+.simSettingsContainer form {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+}
+
+.simSettingsContainer .form-group {
+  width: 13%;
+}
+
+.simSettingsContainer label, .simSettingsContainer input {
+  margin-left: 10px;
+}
+
+.simSettingsContainer button {
+  height: 33px;
+  margin-bottom: 15px;
 }
 
 table tr.good {
