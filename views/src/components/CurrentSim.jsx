@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
-import { numberWithCommas } from '../Util';
+import { numberWithCommas, formatTimeFull } from '../Util';
 import { getEndingCrypto, getGoodBadTrades, runSimulation } from '../Analytics';
-import { Table, Glyphicon } from 'react-bootstrap';
+import { Table, Glyphicon, Button } from 'react-bootstrap';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
 export default class CurrentSim extends Component {
 
 	constructor() {
 		super();
-		this.state= {};
+		this.state= {
+			showTrades: false
+		};
+		this.handleShowTrades = this.handleShowTrades.bind(this);
 	}
 
-	componentDidUpdate() {
-		console.log(runSimulation(this.props.signals, 100));
+	handleShowTrades() {
+		this.setState(prevState => {
+			return { showTrades: !prevState.showTrades };
+		});
 	}
 
 	overallResult() {
@@ -21,6 +27,23 @@ export default class CurrentSim extends Component {
 		let positive = end > start;
 		let myClass = positive ? 'good' : 'bad';
 		return <p>{unit}: <span className='startCrypto'>{start}</span> <Glyphicon className={myClass} glyph='arrow-right' /> <span className='endCrypto'>{end}</span></p>
+	}
+
+	getSignalsTableFormatted() {
+			let simOutput = runSimulation(this.props.signals, 100);
+			let output = [];
+			simOutput.forEach((el) => {
+				if(el.action) {
+					output.push({
+						time: formatTimeFull(el.time),
+						action: el.action,
+						price: numberWithCommas(Math.round(1000*el.price)/1000),
+						cash: numberWithCommas(Math.round(100*el.cash)/100),
+						crypto: numberWithCommas(Math.round(100*el.crypto)/100)
+					})
+				}
+			});
+			return output;
 	}
 
 	render() {
@@ -55,6 +78,14 @@ export default class CurrentSim extends Component {
 						</tr>
 					</tbody>
 				</Table>
+				<Button onClick={this.handleShowTrades} bsStyle='primary'>{this.state.showTrades ? 'Hide Trades' : 'Show Trades'}</Button>
+				<BootstrapTable className={this.state.showTrades ? '' : 'hidden'} data={ this.getSignalsTableFormatted() }>
+					<TableHeaderColumn isKey={ true } dataField='time'>Time</TableHeaderColumn>
+					<TableHeaderColumn dataField='action'>Action</TableHeaderColumn>
+					<TableHeaderColumn dataField='price'>Price</TableHeaderColumn>
+					<TableHeaderColumn dataField='cash'>{this.props.pair.slice(5,8)}</TableHeaderColumn>
+					<TableHeaderColumn dataField='crypto'>{this.props.pair.slice(1,4)}</TableHeaderColumn>
+				</BootstrapTable>
 			</div>
 		)
 	}

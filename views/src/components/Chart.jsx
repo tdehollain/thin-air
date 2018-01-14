@@ -22,19 +22,19 @@ export default class Chart extends Component {
 
 		let unit = this.props.pair.slice(4)==='XXBT' ? 'BTC' : '€'; 
 
-		let xMin = 0;
-		let xMax = 1;
-		let yMin = 0;
-		let yMax = 1;
+		// let xMin = 0;
+		// let xMax = 1;
+		// let yMin = 0;
+		// let yMax = 1;
 
-		if (this.props.chartData.length > 0) {
-			xMin = this.props.chartData[0].time;
-			yMax = this.props.chartData[0][this.props.priceType];
-			this.props.chartData.forEach(el => {
-				if(el.time > xMax) xMax = el.time;
-				if(el[this.props.priceType] > yMax) yMax = el[this.props.priceType];
-			});
-		}
+		// if (this.props.chartData.length > 0) {
+		// 	xMin = this.props.chartData[0].time;
+		// 	yMax = this.props.chartData[0][this.props.priceType];
+		// 	this.props.chartData.forEach(el => {
+		// 		if(el.time > xMax) xMax = el.time;
+		// 		if(el[this.props.priceType] > yMax) yMax = el[this.props.priceType];
+		// 	});
+		// }
 
 		let shortMA;
 		let longMA;

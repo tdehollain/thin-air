@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import { Form, FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 
 export default class ChartSettings extends Component {
 	
@@ -19,7 +19,7 @@ export default class ChartSettings extends Component {
 				<div className='chartSettingsHeader'>
 					<h3>Chart Settings</h3>
 				</div>
-				<Form className='chartSettingsForm'>
+				<Form className='chartSettingsForm' onSubmit={this.props.handleSubmit}>
 					<FormGroup controlId="formPair">
 						<ControlLabel>Trading pair</ControlLabel>
 						<FormControl componentClass='select' name='pair' onChange={this.props.handleChangePair} value={this.props.pair}>
@@ -64,6 +64,7 @@ export default class ChartSettings extends Component {
 						<ControlLabel>Long Window</ControlLabel>
 						<FormControl type='text' onChange={this.props.handleChangeLongWindow} value={this.props.longWindow} />
 					</FormGroup>
+					<Button type='submit' bsStyle='primary' disabled={this.props.submitDisabled}>Go</Button>
 				</Form>
 			</div>
 		)

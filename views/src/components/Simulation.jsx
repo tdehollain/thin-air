@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import { Table, Glyphicon } from 'react-bootstrap';
-import { formatTimeFull, numberWithCommas } from '../Util';
+import { Glyphicon } from 'react-bootstrap';
+// import { formatTimeFull, numberWithCommas } from '../Util';
 import * as Analytics from '../Analytics.js';
+import { BootstrapTable } from 'react-bootstrap-table';
+import TableHeaderColumn from 'react-bootstrap-table/lib/TableHeaderColumn';
 
 export default class Simulation extends Component {
 
-	render() {
+	constructor() {
+		super();
+		this.onRowClick=this.onRowClick.bind(this);
+	}
 
-		if(this.props.chartData.length === 0) return null;
+	onRowClick(row) {
+		this.props.handleRowClick(row);
+	}
 
+	getTableData() {
 		let list = [];
 		let i = this.props.shortFrom;
 		let j = this.props.longFrom;
@@ -32,42 +40,47 @@ export default class Simulation extends Component {
 					let endingCrypto = Analytics.getEndingCrypto(signals, this.props.startingCrypto);
 					let goodBadTrades = Analytics.getGoodBadTrades(signals, this.props.startingCrypto);
 
-					list.push(
-						<tr key={`short-${i}_long-${j}`}>
-							<td>{this.props.avgType}</td>
-							<td>{i}</td>
-							<td>{j}</td>
-							<td>{this.props.startingCrypto}</td>
-							<td><Glyphicon className={endingCrypto > this.props.startingCrypto ? 'good' : 'bad'} glyph='arrow-right' /></td>
-							<td>{endingCrypto}</td>
-							<td>{Math.round(goodBadTrades.goodTrades / (goodBadTrades.goodTrades + goodBadTrades.badTrades)*100)}% ({goodBadTrades.goodTrades} / {goodBadTrades.badTrades})</td>
-							<td>{Math.round(goodBadTrades.goodBuys / (goodBadTrades.goodBuys + goodBadTrades.badBuys)*100)}% ({goodBadTrades.goodBuys} / {goodBadTrades.badBuys})</td>
-							<td>{Math.round(goodBadTrades.goodSells / (goodBadTrades.goodSells + goodBadTrades.badSells)*100)}% ({goodBadTrades.goodSells} / {goodBadTrades.badSells})</td>
-						</tr>
-					)
+					let goodTradesPct = Math.round(goodBadTrades.goodTrades / (goodBadTrades.goodTrades + goodBadTrades.badTrades)*100);
+					let goodBuysPct = Math.round(goodBadTrades.goodBuys / (goodBadTrades.goodBuys + goodBadTrades.badBuys)*100);
+					let goodSellsPct = Math.round(goodBadTrades.goodSells / (goodBadTrades.goodSells + goodBadTrades.badSells)*100);
+
+					list.push({
+						avgType: this.props.avgType,
+						short: i,
+						long: j,
+						startingCrypto: this.props.startingCrypto,
+						arrow: endingCrypto > this.props.startingCrypto ? 'good' : 'bad',
+						endingCrypto: endingCrypto,
+						goodTrades: `${goodTradesPct}% (${goodBadTrades.goodTrades} / ${goodBadTrades.badTrades})`,
+						goodBuys: `${goodBuysPct}% (${goodBadTrades.goodBuys} / ${goodBadTrades.badBuys})`,
+						goodSells: `${goodSellsPct}% (${goodBadTrades.goodSells} / ${goodBadTrades.badSells})`
+					});
 				}
 			}
 		}
+		return list;
+	}
+
+	render() {
+
+		if(this.props.chartData.length === 0) return null;
+
+		function strategyArrow(cell, row) {
+			return (<Glyphicon className={ cell } glyph='arrow-right' />);
+		}
 
 		return (
-			<Table striped bordered condensed hover className='simulationOutput'>
-				<thead>
-					<tr>
-					<th align='center' className='avgTypeHeader'>Type</th>
-					<th align='center' className='shortHeader'>Short</th>
-					<th align='center' className='longHeader'>Long</th>
-					<th align='center' className='startingHeader'>Starting {this.props.pair.slice(1,4)}</th>
-					<th align='center' className='arrowHeader'></th>
-					<th align='center' className='endingHeader'>Ending {this.props.pair.slice(1,4)}</th>
-					<th align='center' className='goodTradesHeader'>Good trades</th>
-					<th align='center' className='goodBuyTradesHeader'>Good Buy trades</th>
-					<th align='center' className='goodSellTradesHeader'>Good Sell trades</th>
-					</tr>
-				</thead>
-				<tbody>
-					{list}
-				</tbody>
-			</Table>
+			<BootstrapTable data={ this.getTableData()} hover condensed options={{ onRowClick: this.onRowClick }}>
+				<TableHeaderColumn isKey={ true } dataField='avgType' dataAlign={'center'} dataSort={ true } width='60'>Type</TableHeaderColumn>
+				<TableHeaderColumn dataField='short' dataAlign={'center'} dataSort={ true } width='60'>Short</TableHeaderColumn>
+				<TableHeaderColumn dataField='long' dataAlign={'center'} dataSort={ true } width='60'>Long</TableHeaderColumn>
+				<TableHeaderColumn dataField='startingCrypto' dataAlign={'center'} dataSort={ true } width='100'>Starting {this.props.pair.slice(1,4)}</TableHeaderColumn>
+				<TableHeaderColumn dataField='arrow' width='50' dataFormat={strategyArrow}></TableHeaderColumn>
+				<TableHeaderColumn dataField='endingCrypto' dataAlign={'center'} dataSort={ true } width='100'>Ending {this.props.pair.slice(1,4)}</TableHeaderColumn>
+				<TableHeaderColumn dataField='goodTrades' dataAlign={'center'} dataSort={ true } width='110'>Good Trades</TableHeaderColumn>
+				<TableHeaderColumn dataField='goodBuys' dataAlign={'center'} dataSort={ true } width='110'>Good Buys</TableHeaderColumn>
+				<TableHeaderColumn dataField='goodSells' dataAlign={'center'} dataSort={ true } width='110'>Good Sells</TableHeaderColumn>
+			</BootstrapTable>
 		)		
 	}
 }

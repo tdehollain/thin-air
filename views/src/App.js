@@ -4,18 +4,20 @@ import ChartSettings from './components/ChartSettings.jsx';
 import ChartContainer from './components/ChartContainer.jsx';
 import SimulationContainer from './components/SimulationContainer.jsx';
 import * as Analytics from './Analytics.js';
+import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min.css';
 
 class App extends Component {
   constructor() {
     super();
 
     this.state = {
-      pair: 'XXBTZEUR',
-      interval: '60',
-      priceType: 'close',
-      avgType: 'EMA',
-      shortWindow: 20,
-      longWindow: 40,
+      pair: localStorage.getItem('pair') || 'XXBTZEUR',
+      interval: localStorage.getItem('interval') || '60',
+      priceType: localStorage.getItem('priceType') || 'close',
+      avgType: localStorage.getItem('avgType') || 'EMA',
+      shortWindow: parseInt(localStorage.getItem('shortWindow'), 10) || 20,
+      longWindow: parseInt(localStorage.getItem('longWindow'), 10) || 40,
+      submitDisabled: true,
       chartData: [],
       chartDataShortMA: [],
       chartDataLongMA: [],
@@ -40,6 +42,8 @@ class App extends Component {
     this.handleChangeAvgType=this.handleChangeAvgType.bind(this);
     this.handleChangeShortWindow=this.handleChangeShortWindow.bind(this);
     this.handleChangeLongWindow=this.handleChangeLongWindow.bind(this);
+    this.handleSubmit=this.handleSubmit.bind(this);
+    this.handleRowClick=this.handleRowClick.bind(this);
   }
   
   fetchChartData(done) {
@@ -91,40 +95,61 @@ class App extends Component {
       this.setState({ showScatter: this.state.signals.length>0 })
     });
   }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    this.fetchChartData(this.updateMAs);
+    this.setState({ submitDisabled: true });
+  }
   
   handleChangePair(e) {
-    this.setState({ pair: e.target.value }, () => {
-      this.fetchChartData(this.updateMAs);
-    });
+    localStorage.setItem('pair', e.target.value);
+    this.setState({ pair: e.target.value, submitDisabled: false });
   }
   
   handleChangeInterval(e) {
-    this.setState({ interval: e.target.value }, () => {
-      this.fetchChartData(this.updateMAs);
-    });
+    localStorage.setItem('interval', e.target.value);
+    this.setState({ interval: e.target.value, submitDisabled: false });
   }
   
   handleChangePriceType(e) {
-    this.setState({ priceType: e.target.value }, this.updateMAs);
+    localStorage.setItem('priceType', e.target.value);
+    this.setState({ priceType: e.target.value, submitDisabled: false });
   }
   
   handleChangeAvgType(e) {
-    this.setState({ avgType: e.target.value }, this.updateMAs);
+    localStorage.setItem('pairž', e.target.value);
+    this.setState({ avgType: e.target.value, submitDisabled: false });
   }
   
   handleChangeShortWindow(e) {
+    localStorage.setItem('shortWindow', e.target.value);
     let val = e.target.value;
     this.setState({ 
       shortWindow: val ? parseInt(val, 10) : '',
-      showShortMA: val ? true : false
-    }, this.updateMAs);
+      showShortMA: val ? true : false,
+      submitDisabled: false
+    });
   }
 
   handleChangeLongWindow(e) {
+    localStorage.setItem('longWindow', e.target.value);
     let val = e.target.value;
     this.setState({ 
       longWindow: val ? parseInt(val, 10) : '',
-      showLongMA: val ? true : false
+      showLongMA: val ? true : false,
+      submitDisabled: false
+    });
+  }
+
+  handleRowClick(row) {
+    localStorage.setItem('avgType', row.avgType);
+    localStorage.setItem('shortWindow', row.shortWindow);
+    localStorage.setItem('longWindow', row.longWindow);
+    this.setState({
+      avgType: row.avgType,
+      shortWindow: row.short,
+      longWindow: row.long
     }, this.updateMAs);
   }
   
@@ -151,6 +176,8 @@ class App extends Component {
 					handleChangeAvgType={this.handleChangeAvgType}
 					handleChangeShortWindow={this.handleChangeShortWindow}
           handleChangeLongWindow={this.handleChangeLongWindow}
+          handleSubmit={this.handleSubmit}
+          submitDisabled={this.state.submitDisabled}
         />
         <ChartContainer 
           pair={this.state.pair}
@@ -172,6 +199,7 @@ class App extends Component {
           longWindow={this.state.longWindow}
           chartData={this.state.chartData.map(el => { return { time: el.time, price: el[this.state.priceType] } } )}
           signals={this.state.signals}
+          handleRowClick={this.handleRowClick}
         />
       </div>
     );

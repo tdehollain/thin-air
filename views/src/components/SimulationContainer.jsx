@@ -9,11 +9,20 @@ export default class SimulationContainer extends Component {
 
 		this.state = {
 			startingCrypto: 100,
-			avgType: 'EMA',
-			shortFrom: 10,
-			shortTo: 20,
-			longFrom: 20,
-			longTo: 40,
+			formSettings: {
+				avgType: 'EMA',
+				shortFrom: 5,
+				shortTo: 15,
+				longFrom: 20,
+				longTo: 25
+			},
+			simSettings: {
+				avgType: 'EMA',
+				shortFrom: 5,
+				shortTo: 15,
+				longFrom: 10,
+				longTo: 25
+			},
 			simOutput:{}
 		}
 
@@ -26,37 +35,44 @@ export default class SimulationContainer extends Component {
 	}
 
 	handleChangeAvgType(e) {
-		this.setState({
-			avgType: e.target.value
-		});
+		let val = e.target.value;
+		this.setState(prevState => ({
+			formSettings: {...prevState.formSettings, avgType: val}
+		}));
 	}
 
 	handleChangeShortFrom(e) {
-		this.setState({
-			shortFrom: e.target.value
-		});
+		let val = e.target.value;
+		this.setState(prevState => ({
+			formSettings: {...prevState.formSettings, shortFrom: val}
+		}));
 	}
 
 	handleChangeShortTo(e) {
-		this.setState({
-			shortTo: e.target.value
-		});
+		let val = e.target.value;
+		this.setState(prevState => ({
+			formSettings: {...prevState.formSettings, shortTo: val}
+		}));
 	}
 
 	handleChangeLongFrom(e) {
-		this.setState({
-			longFrom: e.target.value
-		});
+		let val = e.target.value;
+		this.setState(prevState => ({
+			formSettings: {...prevState.formSettings, longFrom: val}
+		}));
 	}
 
 	handleChangeLongTo(e) {
-		this.setState({
-			longTo: e.target.value
-		});
+		let val = e.target.value;
+		this.setState(prevState => ({
+			formSettings: {...prevState.formSettings, longTo: val}
+		}));
 	}
 
 	handleRunSimulation(e) {
-		alert();
+		this.setState({
+			simSettings: this.state.formSettings
+		});
 	}
 
 	render() {
@@ -71,11 +87,11 @@ export default class SimulationContainer extends Component {
 					startingCrypto={this.state.startingCrypto}
 				/>
 				<SimulationSettings
-					avgType={this.state.avgType}
-					shortFrom={this.state.shortFrom}
-					shortTo={this.state.shortTo}
-					longFrom={this.state.longFrom}
-					longTo={this.state.longTo}
+					avgType={this.state.formSettings.avgType}
+					shortFrom={this.state.formSettings.shortFrom}
+					shortTo={this.state.formSettings.shortTo}
+					longFrom={this.state.formSettings.longFrom}
+					longTo={this.state.formSettings.longTo}
 					startingCrypto={this.state.startingCrypto}
 					handleChangeAvgType={this.handleChangeAvgType}
 					handleChangeShortFrom={this.handleChangeShortFrom}
@@ -86,13 +102,14 @@ export default class SimulationContainer extends Component {
 				/>
 				<Simulation
 					pair={this.props.pair}
-					avgType={this.props.avgType}
-					shortFrom={this.state.shortFrom}
-					shortTo={this.state.shortTo}
-					longFrom={this.state.longFrom}
-					longTo={this.state.longTo}
+					avgType={this.state.simSettings.avgType}
+					shortFrom={this.state.simSettings.shortFrom}
+					shortTo={this.state.simSettings.shortTo}
+					longFrom={this.state.simSettings.longFrom}
+					longTo={this.state.simSettings.longTo}
 					startingCrypto={this.state.startingCrypto}
 					chartData={this.props.chartData}
+					handleRowClick={this.props.handleRowClick}
 				/>
 			</div>
 		)

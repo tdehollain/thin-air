@@ -10,7 +10,9 @@
   font-size: 1.5em;
 }
 
-
+.hidden {
+  display: none;
+}
 
 
 
@@ -30,6 +32,7 @@
 .chartSettingsForm {
   display: flex;
   justify-content: space-around;
+  /* align-items: flex-end */
 }
 
 .chartSettingsContainer .form-group {
@@ -44,6 +47,12 @@ form label {
 .form-group select {
   border-radius: 2px;
   -webkit-appearance: none;
+}
+
+.chartSettingsForm button {
+  height: 34px;
+  width: 50px;
+  margin: 25px 0 0 30px;
 }
 
 
@@ -106,6 +115,11 @@ form label {
 }
 
 
+.currentSimSummary button {
+  margin-bottom: 10px;
+}
+
+
 
 .simSettingsContainer {
   margin: 40px auto 10px;
@@ -113,6 +127,10 @@ form label {
   border-radius: 2px;
   border: 1px solid #bbb;
   background: rgb(245, 245, 245);
+}
+
+.simSettingsContainer h3 {
+  margin-top: 0;
 }
 
 .simSettingsContainer form {
@@ -132,6 +150,10 @@ form label {
 .simSettingsContainer button {
   height: 33px;
   margin-bottom: 15px;
+}
+
+.glyphicon-arrow-right {
+  margin-left: 12px;
 }
 
 table tr.good {
