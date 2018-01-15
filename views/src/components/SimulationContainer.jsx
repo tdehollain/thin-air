@@ -20,7 +20,7 @@ export default class SimulationContainer extends Component {
 				avgType: 'EMA',
 				shortFrom: 5,
 				shortTo: 15,
-				longFrom: 10,
+				longFrom: 20,
 				longTo: 25
 			},
 			simOutput:{}
@@ -35,35 +35,35 @@ export default class SimulationContainer extends Component {
 	}
 
 	handleChangeAvgType(e) {
-		let val = e.target.value;
+		let val = parseInt(e.target.value, 10);
 		this.setState(prevState => ({
 			formSettings: {...prevState.formSettings, avgType: val}
 		}));
 	}
 
 	handleChangeShortFrom(e) {
-		let val = e.target.value;
+		let val = parseInt(e.target.value, 10);
 		this.setState(prevState => ({
 			formSettings: {...prevState.formSettings, shortFrom: val}
 		}));
 	}
 
 	handleChangeShortTo(e) {
-		let val = e.target.value;
+		let val = parseInt(e.target.value, 10);
 		this.setState(prevState => ({
 			formSettings: {...prevState.formSettings, shortTo: val}
 		}));
 	}
 
 	handleChangeLongFrom(e) {
-		let val = e.target.value;
+		let val = parseInt(e.target.value, 10);
 		this.setState(prevState => ({
 			formSettings: {...prevState.formSettings, longFrom: val}
 		}));
 	}
 
 	handleChangeLongTo(e) {
-		let val = e.target.value;
+		let val = parseInt(e.target.value, 10);
 		this.setState(prevState => ({
 			formSettings: {...prevState.formSettings, longTo: val}
 		}));

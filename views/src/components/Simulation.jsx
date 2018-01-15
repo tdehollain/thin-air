@@ -4,6 +4,7 @@ import { Glyphicon } from 'react-bootstrap';
 import * as Analytics from '../Analytics.js';
 import { BootstrapTable } from 'react-bootstrap-table';
 import TableHeaderColumn from 'react-bootstrap-table/lib/TableHeaderColumn';
+import HeatMap from 'react-heatmap-grid';
 
 export default class Simulation extends Component {
 
@@ -16,49 +17,55 @@ export default class Simulation extends Component {
 		this.props.handleRowClick(row);
 	}
 
-	getTableData() {
-		let list = [];
-		let i = this.props.shortFrom;
-		let j = this.props.longFrom;
+	getHeatMapX() {
+		let output = [];
+		let i;
+		for(i=this.props.longFrom; i<=this.props.longTo; i++) {
+			output.push('l-' + i);
+		}
+		return output;
+	}
 
+	getHeatMapY() {
+		let output = [];
+		let i;
 		for(i=this.props.shortFrom; i<=this.props.shortTo; i++) {
-			for(j=this.props.longFrom; j<=this.props.longTo; j++) {
-				if(j>i) {
-					let dataArray = this.props.chartData.map(el => el.price);
-					let MA_short = Analytics.calcMA(this.props.avgType, dataArray, i);
-					let MA_long = Analytics.calcMA(this.props.avgType, dataArray, j);
-			
-					let shortArray = [];
-					let longArray = [];
-					this.props.chartData.forEach((el, index) => {
-						// shortArray.push({ time: el.time, short: MA_short[index] });
-						// longArray.push({ time: el.time, long: MA_long[index] });
-						shortArray.push(MA_short[index]);
-						longArray.push(MA_long[index]);
-					});
-					let signals = Analytics.getSignals(this.props.chartData, shortArray, longArray, j);
-					let endingCrypto = Analytics.getEndingCrypto(signals, this.props.startingCrypto);
-					let goodBadTrades = Analytics.getGoodBadTrades(signals, this.props.startingCrypto);
+			output.push('s-' + i);
+		}
+		return output;
+	}
 
-					let goodTradesPct = Math.round(goodBadTrades.goodTrades / (goodBadTrades.goodTrades + goodBadTrades.badTrades)*100);
-					let goodBuysPct = Math.round(goodBadTrades.goodBuys / (goodBadTrades.goodBuys + goodBadTrades.badBuys)*100);
-					let goodSellsPct = Math.round(goodBadTrades.goodSells / (goodBadTrades.goodSells + goodBadTrades.badSells)*100);
+	getHeatMapData() {
+		let list = Analytics.getSimulationResults(this.props.avgType, this.props.chartData, this.props.shortFrom, this.props.shortTo, this.props.longFrom, this.props.longTo, this.props.startingCrypto);
+		let nbShorts = this.props.shortTo - this.props.shortFrom + 1; // 11
+		let nbLongs = this.props.longTo - this.props.longFrom + 1; // 6
 
-					list.push({
-						avgType: this.props.avgType,
-						short: i,
-						long: j,
-						startingCrypto: this.props.startingCrypto,
-						arrow: endingCrypto > this.props.startingCrypto ? 'good' : 'bad',
-						endingCrypto: endingCrypto,
-						goodTrades: `${goodTradesPct}% (${goodBadTrades.goodTrades} / ${goodBadTrades.badTrades})`,
-						goodBuys: `${goodBuysPct}% (${goodBadTrades.goodBuys} / ${goodBadTrades.badBuys})`,
-						goodSells: `${goodSellsPct}% (${goodBadTrades.goodSells} / ${goodBadTrades.badSells})`
-					});
+		let output = [];
+		let i;
+		for(i=0; i<nbShorts; i++) {
+			output[i]=[]
+		}
+
+		let j;
+		for(i=0; i<nbShorts; i++) {
+			for(j=0; j<nbLongs; j++) {
+				let temp = list.filter(el => el.short - this.props.shortFrom === i && el.long - this.props.longFrom === j);
+				if(temp.length) {
+					output[i][j] = temp[0].endingCrypto;
+				} else {
+					output[i][j] = this.props.startingCrypto;
 				}
 			}
 		}
-		return list;
+		
+		// list.forEach(el => {
+		// 	let x = el.short - this.props.shortFrom;
+		// 	let y = el.long - this.props.longFrom;
+		// 	console.log(output);
+		// 	output[el.short - this.props.shortFrom][el.long - this.props.longFrom] = el.endingCrypto ? el.endingCrypto : 0;
+		// });
+
+		return output;
 	}
 
 	render() {
@@ -70,17 +77,26 @@ export default class Simulation extends Component {
 		}
 
 		return (
-			<BootstrapTable data={ this.getTableData()} hover condensed options={{ onRowClick: this.onRowClick }}>
-				<TableHeaderColumn isKey={ true } dataField='avgType' dataAlign={'center'} dataSort={ true } width='60'>Type</TableHeaderColumn>
-				<TableHeaderColumn dataField='short' dataAlign={'center'} dataSort={ true } width='60'>Short</TableHeaderColumn>
-				<TableHeaderColumn dataField='long' dataAlign={'center'} dataSort={ true } width='60'>Long</TableHeaderColumn>
-				<TableHeaderColumn dataField='startingCrypto' dataAlign={'center'} dataSort={ true } width='100'>Starting {this.props.pair.slice(1,4)}</TableHeaderColumn>
-				<TableHeaderColumn dataField='arrow' width='50' dataFormat={strategyArrow}></TableHeaderColumn>
-				<TableHeaderColumn dataField='endingCrypto' dataAlign={'center'} dataSort={ true } width='100'>Ending {this.props.pair.slice(1,4)}</TableHeaderColumn>
-				<TableHeaderColumn dataField='goodTrades' dataAlign={'center'} dataSort={ true } width='110'>Good Trades</TableHeaderColumn>
-				<TableHeaderColumn dataField='goodBuys' dataAlign={'center'} dataSort={ true } width='110'>Good Buys</TableHeaderColumn>
-				<TableHeaderColumn dataField='goodSells' dataAlign={'center'} dataSort={ true } width='110'>Good Sells</TableHeaderColumn>
-			</BootstrapTable>
+			<div>
+				<div className='heatmap'>
+					<HeatMap
+						xLabels={this.getHeatMapX()}
+						yLabels={this.getHeatMapY()}
+						data={this.getHeatMapData()}
+					/>
+				</div>
+				<BootstrapTable data={ Analytics.getSimulationResults(this.props.avgType, this.props.chartData, this.props.shortFrom, this.props.shortTo, this.props.longFrom, this.props.longTo, this.props.startingCrypto)} hover condensed options={{ onRowClick: this.onRowClick }}>
+					<TableHeaderColumn isKey={ true } dataField='avgType' dataAlign={'center'} dataSort={ true } width='60'>Type</TableHeaderColumn>
+					<TableHeaderColumn dataField='short' dataAlign={'center'} dataSort={ true } width='60'>Short</TableHeaderColumn>
+					<TableHeaderColumn dataField='long' dataAlign={'center'} dataSort={ true } width='60'>Long</TableHeaderColumn>
+					<TableHeaderColumn dataField='startingCrypto' dataAlign={'center'} dataSort={ true } width='100'>Starting {this.props.pair.slice(1,4)}</TableHeaderColumn>
+					<TableHeaderColumn dataField='arrow' width='50' dataFormat={strategyArrow}></TableHeaderColumn>
+					<TableHeaderColumn dataField='endingCrypto' dataAlign={'center'} dataSort={ true } width='100'>Ending {this.props.pair.slice(1,4)}</TableHeaderColumn>
+					<TableHeaderColumn dataField='goodTrades' dataAlign={'center'} dataSort={ true } width='110'>Good Trades</TableHeaderColumn>
+					<TableHeaderColumn dataField='goodBuys' dataAlign={'center'} dataSort={ true } width='110'>Good Buys</TableHeaderColumn>
+					<TableHeaderColumn dataField='goodSells' dataAlign={'center'} dataSort={ true } width='110'>Good Sells</TableHeaderColumn>
+				</BootstrapTable>
+			</div>
 		)		
 	}
 }

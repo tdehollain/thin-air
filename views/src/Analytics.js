@@ -125,6 +125,8 @@ export function getEndingCrypto(signals, startingCrypto) {
 }
 
 export function	getGoodBadTrades(signals, startingCrypto) {
+
+	
 	if(!signals || signals.length===0) return;
 		let output = runSimulation(signals, startingCrypto);
 		let goodBuys = 0;
@@ -151,4 +153,49 @@ export function	getGoodBadTrades(signals, startingCrypto) {
 		let badTrades = badBuys + badSells;
 
 		return { goodBuys, badBuys, goodSells, badSells, goodTrades, badTrades };
+	}
+
+	export function getSimulationResults(avgType, chartData, shortFrom, shortTo, longFrom, longTo, startingCrypto) {
+		let list = [];
+		let i = shortFrom;
+		let j = longFrom;
+
+		for(i=shortFrom; i<=shortTo; i++) {
+			for(j=longFrom; j<=longTo; j++) {
+				if(j>i) {
+					let dataArray = chartData.map(el => el.price);
+					let MA_short = calcMA(avgType, dataArray, i);
+					let MA_long = calcMA(avgType, dataArray, j);
+			
+					let shortArray = [];
+					let longArray = [];
+					chartData.forEach((el, index) => {
+						// shortArray.push({ time: el.time, short: MA_short[index] });
+						// longArray.push({ time: el.time, long: MA_long[index] });
+						shortArray.push(MA_short[index]);
+						longArray.push(MA_long[index]);
+					});
+					let signals = getSignals(chartData, shortArray, longArray, j);
+					let endingCrypto = getEndingCrypto(signals, startingCrypto);
+					let goodBadTrades = getGoodBadTrades(signals, startingCrypto);
+
+					let goodTradesPct = Math.round(goodBadTrades.goodTrades / (goodBadTrades.goodTrades + goodBadTrades.badTrades)*100);
+					let goodBuysPct = Math.round(goodBadTrades.goodBuys / (goodBadTrades.goodBuys + goodBadTrades.badBuys)*100);
+					let goodSellsPct = Math.round(goodBadTrades.goodSells / (goodBadTrades.goodSells + goodBadTrades.badSells)*100);
+
+					list.push({
+						avgType: avgType,
+						short: i,
+						long: j,
+						startingCrypto: startingCrypto,
+						arrow: endingCrypto > startingCrypto ? 'good' : 'bad',
+						endingCrypto: endingCrypto,
+						goodTrades: `${goodTradesPct}% (${goodBadTrades.goodTrades} / ${goodBadTrades.badTrades})`,
+						goodBuys: `${goodBuysPct}% (${goodBadTrades.goodBuys} / ${goodBadTrades.badBuys})`,
+						goodSells: `${goodSellsPct}% (${goodBadTrades.goodSells} / ${goodBadTrades.badSells})`
+					});
+				}
+			}
+		}
+		return list;
 	}
